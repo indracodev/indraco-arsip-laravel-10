@@ -1,7 +1,17 @@
 <!DOCTYPE html>
+@php
+    $configuredFontSize = config('app.font_size', 'medium');
+    $fontSizeScale = match(strtolower($configuredFontSize)) {
+        'small', 'sm' => '90%',
+        'large', 'lg' => '110%',
+        'xlarge', 'xl' => '120%',
+        default => (str_contains($configuredFontSize, 'px') || str_contains($configuredFontSize, '%') || str_contains($configuredFontSize, 'rem')) ? $configuredFontSize : '100%',
+    };
+@endphp
 <html lang="id" 
       x-data="{ theme: localStorage.getItem('theme') || 'dark' }" 
-      :class="theme === 'dark' ? 'dark' : ''">
+      :class="theme === 'dark' ? 'dark' : ''"
+      style="font-size: {{ $fontSizeScale }};">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

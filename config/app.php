@@ -17,6 +17,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'font_size' => env('APP_FONT_SIZE', 'medium'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
