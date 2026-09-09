@@ -3,7 +3,7 @@
 @section('title', 'Form Eksekusi BAP Pemusnahan - DMS PT Indraco')
 
 @section('content')
-<div class="max-w-3xl mx-auto space-y-6">
+<div class="w-full max-w-5xl mx-auto space-y-6">
     <!-- Header -->
     <div>
         <a href="{{ route('destructions.index') }}" class="text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline inline-flex items-center gap-1 mb-2">

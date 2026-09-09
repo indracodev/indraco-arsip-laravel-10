@@ -3,7 +3,7 @@
 @section('title', 'Form Pengajuan Pinjam Arsip - DMS PT Indraco')
 
 @section('content')
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="w-full max-w-5xl mx-auto space-y-6">
     <!-- Header -->
     <div>
         <a href="{{ route('borrowings.index') }}" class="text-xs text-amber-400 font-semibold hover:underline inline-flex items-center gap-1 mb-2">

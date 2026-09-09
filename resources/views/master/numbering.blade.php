@@ -3,7 +3,7 @@
 @section('title', 'Custom Engine Format Penomoran Box - DMS PT Indraco')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-8" x-data="{ openAdd: false }">
+<div class="w-full space-y-8" x-data="{ openAdd: false }">
     <!-- Header -->
     <div>
         <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">

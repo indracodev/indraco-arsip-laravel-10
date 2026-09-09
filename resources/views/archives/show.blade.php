@@ -3,7 +3,7 @@
 @section('title', 'Detail Arsip - ' . $archive->title)
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="w-full space-y-6">
     <!-- Navigation & Action Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

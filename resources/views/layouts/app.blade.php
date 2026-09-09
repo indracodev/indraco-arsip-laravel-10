@@ -192,7 +192,7 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 bg-slate-50 dark:bg-slate-900 p-4 sm:p-6 lg:p-8 overflow-y-auto transition-colors duration-200">
-                <div class="max-w-7xl mx-auto space-y-6">
+                <div class="w-full max-w-[1700px] mx-auto space-y-6">
                     
                     <!-- Flash Alert Banners -->
                     @if (session('success'))
