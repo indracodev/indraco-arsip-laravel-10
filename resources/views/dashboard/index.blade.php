@@ -5,8 +5,12 @@
 @section('content')
 <div class="space-y-8">
     <!-- Top Welcome Banner -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border border-slate-700 dark:border-slate-800 p-6 sm:p-8 shadow-xl text-white">
-        <div class="absolute -top-12 -right-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="relative rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border border-slate-700 dark:border-slate-800 p-6 sm:p-8 shadow-xl text-white">
+        <!-- Background Glow (Isolated overflow-hidden) -->
+        <div class="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+            <div class="absolute -top-12 -right-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
+        </div>
+
         <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-3">
