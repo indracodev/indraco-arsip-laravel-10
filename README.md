@@ -51,6 +51,25 @@ Pencatatan riwayat aktivitas secara transparan:
 
 ---
 
+## ⚙️ Konfigurasi Environment & Skala Ukuran Font (`.env`)
+
+Aplikasi DMS PT Indraco mendukung pengaturan skala ukuran font secara dinamis di seluruh halaman melalui parameter `APP_FONT_SIZE` pada file `.env`.
+
+```env
+# Pengaturan Skala Ukuran Font Aplikasi
+# Pilihan opsi: small, medium, large, xlarge, atau spesifik (misal: 15px, 95%)
+APP_FONT_SIZE=medium
+```
+
+### Opsi Nilai Parameter:
+- `small` atau `sm` &rarr; Skala font **90%** (tampilan ekstra padat & ringkas).
+- `medium` atau `md` &rarr; Skala font **100%** (*standard default*).
+- `large` atau `lg` &rarr; Skala font **110%** (ukuran font lebih besar & jelas).
+- `xlarge` atau `xl` &rarr; Skala font **120%** (ukuran font maksimal).
+- Nilai spesifik seperti `15px`, `95%`, atau `0.95rem` juga dapat dimasukkan secara langsung.
+
+---
+
 ## 🔑 Kredensial Pengguna Demo (Default Seeders)
 
 Halaman login dilengkapi dengan **Tombol Pintasan Login Cepat (One-Click Demo Login)** untuk kemudahan pengujian:
