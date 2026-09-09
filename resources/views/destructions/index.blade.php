@@ -136,9 +136,9 @@
                                 <span class="font-extrabold text-rose-600 dark:text-rose-400" x-text="arc.retention_expiry_date"></span>
                                 <span class="text-[10px] text-slate-500 block" x-text="'(' + (arc.retention_years || 0) + ' Thn Retention)'"></span>
                             </td>
-                            <td class="py-4 px-4">
-                                <span x-show="arc.status === 'destroyed'" class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Dimusnahkan</span>
-                                <span x-show="arc.status !== 'destroyed'" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Jatuh Tempo</span>
+                            <td class="py-4 px-4 whitespace-nowrap">
+                                <span x-show="arc.status === 'destroyed'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Dimusnahkan</span>
+                                <span x-show="arc.status !== 'destroyed'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Jatuh Tempo</span>
                             </td>
                             <td class="py-4 px-4 text-right">
                                 <template x-if="arc.status !== 'destroyed'">

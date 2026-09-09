@@ -145,10 +145,10 @@
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition font-medium">
                             <td class="py-4 px-4 font-bold text-slate-900 dark:text-white" x-text="usr.name"></td>
                             <td class="py-4 px-4 text-xs font-mono text-slate-700 dark:text-slate-300" x-text="usr.email"></td>
-                            <td class="py-4 px-4">
-                                <span x-show="usr.role === 'admin'" class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Super Admin</span>
-                                <span x-show="usr.role === 'pic_gudang'" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">PIC Gudang Arsip</span>
-                                <span x-show="usr.role === 'pic_dept'" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">PIC Departemen</span>
+                            <td class="py-4 px-4 whitespace-nowrap">
+                                <span x-show="usr.role === 'admin'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Super Admin</span>
+                                <span x-show="usr.role === 'pic_gudang'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">PIC Gudang Arsip</span>
+                                <span x-show="usr.role === 'pic_dept'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">PIC Departemen</span>
                             </td>
                             <td class="py-4 px-4 text-xs text-slate-700 dark:text-slate-300 font-bold" x-text="usr.department ? (usr.department.code + ' - ' + usr.department.name) : 'Global / Seluruh'"></td>
                             <td class="py-4 px-4 text-xs text-slate-500 dark:text-slate-400" x-text="usr.phone || '-'"></td>

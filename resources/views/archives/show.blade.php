@@ -40,17 +40,17 @@
             <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Workflow Berkas</span>
             <div>
                 @if($archive->status === 'draft')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700">Draft / Perlu Revisi</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700">Draft / Perlu Revisi</span>
                 @elseif($archive->status === 'pending_verification')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Menunggu Verifikasi PIC Gudang</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Menunggu Verifikasi PIC Gudang</span>
                 @elseif($archive->status === 'approved_booked')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Approved / Booking Tempat Fix</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Approved / Booking Tempat Fix</span>
                 @elseif($archive->status === 'in_warehouse')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/30">Tersimpan di Gudang Arsip</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/30">Tersimpan di Gudang Arsip</span>
                 @elseif($archive->status === 'borrowed')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Sedang Dipinjam</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Sedang Dipinjam</span>
                 @elseif($archive->status === 'destroyed')
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Telah Dimusnahkan (BAP Recorded)</span>
+                    <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Telah Dimusnahkan (BAP Recorded)</span>
                 @endif
             </div>
         </div>
