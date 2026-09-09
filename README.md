@@ -1,66 +1,116 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Document Management System (DMS) / Gudang Arsip PT Indraco
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="logo-indraco-est.png" alt="PT Indraco Logo" width="220">
 </p>
 
-## About Laravel
+Aplikasi **Document Management System (DMS) / Sistem Manajemen & Gudang Arsip PT Indraco** dirancang untuk mengelola siklus hidup fisik dan digital dokumen/arsip perusahaan secara terpusat, aman, dan teratur. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistem ini memfasilitasi setiap departemen di PT Indraco dalam pencatatan draft dokumen, pemesanan (booking) lokasi penyimpanan di gudang arsip, penomoran box otomatis berformat custom, peminjaman dokumen, hingga pengawasan masa simpan (*retention expiry*) dan alur berita acara pemusnahan dokumen (BAP).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🌟 Fitur Utama & Keunggulan
 
-## Learning Laravel
+### 1. Dynamic Custom Box Code Engine
+Engine generator nomor box arsip otomatis berbasis format template yang dapat disesuaikan tanpa perlu mengubah kode program.
+- **Pattern Default:** `{COMPANY}/{DEPT}/{YEAR}/{ROMAN_MONTH}/{COUNTER}` &rarr; `IND/FIN/2026/III/0001`
+- **Placeholder Terdaftar:** `{COMPANY}`, `{DEPT}`, `{YEAR}`, `{ROMAN_MONTH}`, `{COUNTER}`, `{COUNTER_BOX}`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Workflow Alur Operasional End-to-End
+- **Pengajuan & Booking Storage (PIC Departemen):** Penginputan metadata berkas, range tanggal periode (e.g. *Januari - Maret 2026*), masa simpan retention (tahun), kondisi fisik wadah, rincian dokumen, dan upload lampiran berkas digital.
+- **Hub Verifikasi & Penomoran (PIC Gudang):** Pengecekan kesesuaian berkas fisik oleh kurator gudang, penolakan revisi, atau persetujuan yang secara otomatis men-generate Nomor Box Custom.
+- **Check-in & Penempatan Rak Gudang:** Penempatan fisik box ke slot rak gudang (`RAK-A1 BARIS-01`), pemantauan kapasitas rak, dan pencatatan **Log Masuk Gudang**.
+- **Alur Peminjaman & Pengembalian Dokumen:** Pengajuan pinjam berkas, approval kurator, pengeluaran fisik (*dispatch*), dan konfirmasi pengembalian berkas ke gudang.
+- **Retention Expiry & Berita Acara Pemusnahan (BAP):** Alert notifikasi otomatis untuk dokumen yang mendekati/melewati masa simpan (&le; 90 hari), pencatatan BAP, upload sertifikat pemusnahan, dan pencetakan dokumen resmi BAP dengan blok tanda tangan 3-kolom.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 3. Global Audit Trail Log System
+Pencatatan riwayat aktivitas secara transparan:
+- **Log Masuk Gudang:** Mencatat tgl masuk, PIC Gudang penerima, lokasi rak, & catatan reception.
+- **Log Peminjaman:** Mencatat peminjam, alasan pinjam, tgl pinjam, estimasi kembali, realisasi pengembalian, & verifikator.
+- **Log Pemusnahan:** Mencatat nomor BAP, tanggal eksekusi, metode fisik (incinerator/shredder), dan eksekutor.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 👥 Hak Akses & Peran Pengguna (Role & Access Control)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+| Peran (Role) | Kode System | Deskripsi & Hak Akses |
+| :--- | :--- | :--- |
+| **Super Admin / Management** | `admin` | Pengelolaan Master Data (Departemen, Gudang, Rak, Format Box, User & Role), melihat analisis global & seluruh audit log. |
+| **PIC Gudang (Warehouse Curator)** | `pic_gudang` | Dashboard gudang, verifikasi pengajuan, penomoran box, check-in rak, dispatch peminjaman, & eksekusi BAP pemusnahan. |
+| **PIC Departemen Client** | `pic_dept` | Input draft arsip departemennya, pengajuan booking storage gudang, peminjaman dokumen, & katalog khusus departemen. |
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 🛠️ Tech Stack & Dependensi
 
-## Contributing
+* **Framework Core:** Laravel 10 (PHP 8.1+)
+* **UI & Frontend Layout:** Tailwind CSS v3 (Corporate Navy `#0F172A` & Gold `#D4AF37`), Alpine.js, Lucide Icons
+* **Database:** SQLite (Local Dev) / MySQL / MariaDB
+* **Branding Assets:** Logo Resmi PT Indraco (`logo-indraco-est.png`)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🔑 Kredensial Pengguna Demo (Default Seeders)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Halaman login dilengkapi dengan **Tombol Pintasan Login Cepat (One-Click Demo Login)** untuk kemudahan pengujian:
 
-## Security Vulnerabilities
+| Role Account | Email Login | Password | Link Departemen |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `admin@indraco.com` | `password` | Global / Management |
+| **PIC Gudang (Specialist)** | `gudang@indraco.com` | `password` | Gudang Arsip Utama |
+| **PIC Dept Keuangan** | `fin@indraco.com` | `password` | Keuangan & Akuntansi (`FIN`) |
+| **PIC Dept HRD** | `hrd@indraco.com` | `password` | Human Resources & Legal (`HRD`) |
+| **PIC Dept Marketing** | `mkt@indraco.com` | `password` | Marketing & Sales (`MKT`) |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🚀 Panduan Memulai (Quick Start Installation)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Clone Repository:**
+   ```bash
+   git clone https://github.com/indracodev/indraco-arsip-laravel-10.git
+   cd indraco-arsip-laravel-10
+   ```
+
+2. **Install Dependensi PHP:**
+   ```bash
+   composer install
+   ```
+
+3. **Konfigurasi Environment File:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Migrasi Database & Seeder:**
+   ```bash
+   # Membuat file database sqlite jika belum ada
+   php -r "if(!file_exists('database/database.sqlite')) touch('database/database.sqlite');"
+   
+   # Jalankan migrasi dan seeder data awal
+   php artisan migrate:fresh --seed
+   ```
+
+5. **Jalankan Development Server:**
+   ```bash
+   php artisan serve --port=8000
+   ```
+   Buka browser di `http://127.0.0.1:8000`
+
+---
+
+## 📄 Struktur Rute Utama (Application Routes)
+
+- `/login` &harr; Halaman login corporate dengan pintasan akun demo.
+- `/dashboard` &harr; Overview statistik, kapasitas gudang, alert expiry, & arsip terbaru.
+- `/archives` &harr; Katalog arsip, pengajuan booking draft, & detail timeline.
+- `/borrowings` &harr; Pengajuan pinjam, approval, dispatch berkas, & konfirmasi kembali.
+- `/destructions` &harr; Monitoring retention expiry, eksekusi BAP, & cetak dokumen resmi BAP.
+- `/logs` &harr; Global Audit Trail Logs (Log Masuk, Log Pinjam, Log Pemusnahan).
+- `/master/*` &harr; Master Departemen, Gudang & Rak, Format Custom Box, & User Management.
+
+---
+
+&copy; 2026 **PT Indraco**. All rights reserved.
