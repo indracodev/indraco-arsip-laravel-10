@@ -28,9 +28,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Dashboard
+    // Dashboard & Live Search
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/api/search-archives', [DashboardController::class, 'searchApi'])->name('archives.search_api');
 
     // Archives Management
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');

@@ -87,4 +87,52 @@ class DashboardController extends Controller
             'deptBreakdown'
         ));
     }
+
+    public function searchApi(Request $request)
+    {
+        $user = auth()->user();
+        $search = trim($request->get('q', ''));
+
+        if (empty($search)) {
+            return response()->json([]);
+        }
+
+        $query = Archive::with(['department', 'location.warehouse']);
+
+        if ($user->isPicDept()) {
+            $query->where('department_id', $user->department_id);
+        }
+
+        $archives = $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('box_number', 'like', "%{$search}%")
+                  ->orWhere('period_text', 'like', "%{$search}%")
+                  ->orWhere('content_description', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->take(8)
+            ->get()
+            ->map(function ($archive) {
+                return [
+                    'id' => $archive->id,
+                    'title' => $archive->title,
+                    'box_number' => $archive->box_number ?? 'Penomoran Pending',
+                    'dept_code' => $archive->department->code ?? 'GEN',
+                    'location' => $archive->location->full_location ?? 'Belum Ditentukan',
+                    'status' => $archive->status,
+                    'status_label' => match($archive->status) {
+                        'draft' => 'Draft',
+                        'pending_verification' => 'Antrean Verifikasi',
+                        'approved_booked' => 'Approved / Booking',
+                        'in_warehouse' => 'Di Gudang',
+                        'borrowed' => 'Dipinjam',
+                        'destroyed' => 'Dimusnahkan',
+                        default => ucfirst($archive->status)
+                    },
+                    'url' => route('archives.show', $archive->id),
+                ];
+            });
+
+        return response()->json($archives);
+    }
 }
