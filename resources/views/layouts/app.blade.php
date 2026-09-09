@@ -128,12 +128,26 @@
         </header>
 
         <div class="flex flex-1">
+            <!-- Mobile Backdrop Overlay -->
+            <div 
+                x-show="sidebarOpen" 
+                @click="sidebarOpen = false" 
+                x-cloak
+                x-transition:enter="transition-opacity ease-linear duration-200" 
+                x-transition:enter-start="opacity-0" 
+                x-transition:enter-end="opacity-100" 
+                x-transition:leave="transition-opacity ease-linear duration-200" 
+                x-transition:leave-start="opacity-100" 
+                x-transition:leave-end="opacity-0" 
+                class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
+            ></div>
+
             <!-- Sidebar Navigation -->
             <aside 
                 :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-                class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transform lg:translate-x-0 lg:static lg:inset-auto transition-transform duration-200 ease-in-out flex flex-col justify-between pt-16 lg:pt-0"
+                class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transition-transform duration-200 ease-in-out flex flex-col justify-between lg:translate-x-0 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] shrink-0 pt-16 lg:pt-0"
             >
-                <div class="p-4 space-y-6 overflow-y-auto">
+                <div class="flex-1 p-4 space-y-6 overflow-y-auto">
                     <!-- Section: Menu Utama -->
                     <div>
                         <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-2">Navigasi Utama</span>
@@ -192,41 +206,56 @@
                 </div>
 
                 <!-- Footer Sidebar Info -->
-                <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-center">
-                    <div class="text-[11px] text-slate-500 font-medium">
-                        &copy; 2026 PT Indraco System<br>
-                        <span class="text-slate-400 dark:text-slate-600">DMS Version 1.0.0</span>
+                <div class="shrink-0 p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-center">
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        &copy; {{ date('Y') }} PT Indraco System<br>
+                        <span class="text-slate-400 dark:text-slate-500">DMS Version 1.0.0</span>
                     </div>
                 </div>
             </aside>
 
             <!-- Main Content Area -->
-            <main class="flex-1 bg-slate-50 dark:bg-slate-900 p-4 sm:p-6 lg:p-8 overflow-y-auto transition-colors duration-200">
-                <div class="w-full max-w-[1700px] mx-auto space-y-6">
-                    
-                    <!-- Flash Alert Banners -->
-                    @if (session('success'))
-                    <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 shadow-sm">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
-                        <div class="text-sm font-semibold">{{ session('success') }}</div>
-                    </div>
-                    @endif
+            <main class="flex-1 bg-slate-50 dark:bg-slate-900 p-4 sm:p-6 lg:p-8 transition-colors duration-200 min-w-0">
+                <div class="w-full max-w-[1700px] mx-auto min-h-[calc(100vh-8rem)] flex flex-col justify-between gap-8">
+                    <div class="space-y-6">
+                        <!-- Flash Alert Banners -->
+                        @if (session('success'))
+                        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 flex items-start gap-3 shadow-sm">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                            <div class="text-sm font-semibold">{{ session('success') }}</div>
+                        </div>
+                        @endif
 
-                    @if (session('warning'))
-                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-start gap-3 shadow-sm">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"></i>
-                        <div class="text-sm font-semibold">{{ session('warning') }}</div>
-                    </div>
-                    @endif
+                        @if (session('warning'))
+                        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-start gap-3 shadow-sm">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"></i>
+                            <div class="text-sm font-semibold">{{ session('warning') }}</div>
+                        </div>
+                        @endif
 
-                    @if (session('error'))
-                    <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 flex items-start gap-3 shadow-sm">
-                        <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5"></i>
-                        <div class="text-sm font-semibold">{{ session('error') }}</div>
-                    </div>
-                    @endif
+                        @if (session('error'))
+                        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 flex items-start gap-3 shadow-sm">
+                            <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5"></i>
+                            <div class="text-sm font-semibold">{{ session('error') }}</div>
+                        </div>
+                        @endif
 
-                    @yield('content')
+                        @yield('content')
+                    </div>
+
+                    <!-- Main Content Page Footer -->
+                    <footer class="pt-6 border-t border-slate-200 dark:border-slate-800/80 text-[11px] text-slate-400 dark:text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+                        <div>
+                            &copy; {{ date('Y') }} PT Indraco - Archive & Document Management System
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-medium text-slate-500 dark:text-slate-400">DMS Version 1.0.0</span>
+                            <span>•</span>
+                            <span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Sistem Aktif
+                            </span>
+                        </div>
+                    </footer>
                 </div>
             </main>
         </div>
