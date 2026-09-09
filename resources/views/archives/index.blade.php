@@ -21,8 +21,11 @@
     </div>
 
     <!-- Filter & Search Bar Card -->
-    <div class="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
-        <form action="{{ route('archives.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm" x-data="{ submitting: false }">
+        <form action="{{ route('archives.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" @submit="submitting = true">
+            <input type="hidden" name="sort" value="{{ request('sort', 'created_at') }}">
+            <input type="hidden" name="direction" value="{{ request('direction', 'desc') }}">
+
             <!-- Search Keyword -->
             <div class="space-y-1">
                 <label class="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 block">Cari Keyword</label>
@@ -65,19 +68,23 @@
                 </select>
             </div>
 
-            <!-- Expiry Alert Filter & Submit -->
+            <!-- Expiry Alert Filter -->
             <div class="space-y-1">
                 <label class="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 block">Filter Expiry Masa Simpan</label>
-                <div class="flex gap-2">
-                    <select name="expiry_filter" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition font-medium">
-                        <option value="">-- Semua Expiry --</option>
-                        <option value="expiring_soon" {{ request('expiry_filter') == 'expiring_soon' ? 'selected' : '' }}>Mendekati Expiry (&le; 90 Hari)</option>
-                        <option value="expired" {{ request('expiry_filter') == 'expired' ? 'selected' : '' }}>Sudah Kadaluarsa</option>
-                    </select>
-                    <button type="submit" class="px-4 py-2 bg-slate-800 dark:bg-slate-800 text-white rounded-xl text-xs font-bold transition hover:bg-slate-700 flex items-center justify-center">
-                        <i data-lucide="filter" class="w-4 h-4"></i>
-                    </button>
-                </div>
+                <select name="expiry_filter" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition font-medium">
+                    <option value="">-- Semua Expiry --</option>
+                    <option value="expiring_soon" {{ request('expiry_filter') == 'expiring_soon' ? 'selected' : '' }}>Mendekati Expiry (&le; 90 Hari)</option>
+                    <option value="expired" {{ request('expiry_filter') == 'expired' ? 'selected' : '' }}>Sudah Kadaluarsa</option>
+                </select>
+            </div>
+
+            <!-- Submit Filter Button -->
+            <div class="space-y-1 flex items-end">
+                <button type="submit" :disabled="submitting" class="w-full py-2 px-4 bg-slate-800 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 h-9 shadow-sm">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin" x-show="submitting"></i>
+                    <i data-lucide="filter" class="w-4 h-4" x-show="!submitting"></i>
+                    <span x-text="submitting ? 'Memuat...' : 'Terapkan Filter'"></span>
+                </button>
             </div>
         </form>
     </div>
@@ -87,14 +94,55 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        <th class="py-3.5 px-4">No. Box Arsip</th>
-                        <th class="py-3.5 px-4">Judul Berkas & Dept</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
+                        @php
+                            $curSort = request('sort', 'created_at');
+                            $curDir = request('direction', 'desc');
+                            $nextDir = $curDir === 'asc' ? 'desc' : 'asc';
+                        @endphp
+                        <th class="py-3.5 px-4">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'box_number', 'direction' => $curSort === 'box_number' ? $nextDir : 'asc']) }}" class="flex items-center gap-1.5 hover:text-amber-500 transition">
+                                No. Box Arsip
+                                @if($curSort === 'box_number')
+                                    <i data-lucide="{{ $curDir === 'asc' ? 'arrow-up' : 'arrow-down' }}" class="w-3.5 h-3.5 text-amber-500"></i>
+                                @else
+                                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 opacity-40"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="py-3.5 px-4">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'title', 'direction' => $curSort === 'title' ? $nextDir : 'asc']) }}" class="flex items-center gap-1.5 hover:text-amber-500 transition">
+                                Judul Berkas & Dept
+                                @if($curSort === 'title')
+                                    <i data-lucide="{{ $curDir === 'asc' ? 'arrow-up' : 'arrow-down' }}" class="w-3.5 h-3.5 text-amber-500"></i>
+                                @else
+                                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 opacity-40"></i>
+                                @endif
+                            </a>
+                        </th>
                         <th class="py-3.5 px-4">Periode Berkas</th>
                         <th class="py-3.5 px-4">Kondisi Fisik</th>
                         <th class="py-3.5 px-4">Lokasi Rak Gudang</th>
-                        <th class="py-3.5 px-4">Masa Simpan (Expiry)</th>
-                        <th class="py-3.5 px-4">Status</th>
+                        <th class="py-3.5 px-4">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'retention_expiry_date', 'direction' => $curSort === 'retention_expiry_date' ? $nextDir : 'asc']) }}" class="flex items-center gap-1.5 hover:text-amber-500 transition">
+                                Masa Simpan (Expiry)
+                                @if($curSort === 'retention_expiry_date')
+                                    <i data-lucide="{{ $curDir === 'asc' ? 'arrow-up' : 'arrow-down' }}" class="w-3.5 h-3.5 text-amber-500"></i>
+                                @else
+                                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 opacity-40"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="py-3.5 px-4">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'status', 'direction' => $curSort === 'status' ? $nextDir : 'asc']) }}" class="flex items-center gap-1.5 hover:text-amber-500 transition">
+                                Status
+                                @if($curSort === 'status')
+                                    <i data-lucide="{{ $curDir === 'asc' ? 'arrow-up' : 'arrow-down' }}" class="w-3.5 h-3.5 text-amber-500"></i>
+                                @else
+                                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 opacity-40"></i>
+                                @endif
+                            </a>
+                        </th>
                         <th class="py-3.5 px-4 text-right">Aksi</th>
                     </tr>
                 </thead>

@@ -33,7 +33,7 @@
         </div>
 
         <!-- Filter Form -->
-        <form action="{{ route('logs.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        <form action="{{ route('logs.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2" x-data="{ submitting: false }" @submit="submitting = true">
             <input type="hidden" name="tab" value="{{ $tab }}">
             
             <div>
@@ -50,8 +50,10 @@
             </div>
 
             <div>
-                <button type="submit" class="w-full py-2 bg-slate-800 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition">
-                    Terapkan Filter Log
+                <button type="submit" :disabled="submitting" class="w-full py-2 bg-slate-800 dark:bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm">
+                    <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="submitting"></i>
+                    <i data-lucide="filter" class="w-3.5 h-3.5" x-show="!submitting"></i>
+                    <span x-text="submitting ? 'Memuat Log...' : 'Terapkan Filter Log'"></span>
                 </button>
             </div>
         </form>

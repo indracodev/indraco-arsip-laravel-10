@@ -53,7 +53,18 @@ class ArchiveController extends Controller
             }
         }
 
-        $archives = $query->latest()->paginate(10)->withQueryString();
+        // Sorting
+        $sortColumn = $request->get('sort', 'created_at');
+        $sortDirection = strtolower($request->get('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $allowedSorts = ['box_number', 'title', 'created_at', 'retention_expiry_date', 'status'];
+
+        if (in_array($sortColumn, $allowedSorts)) {
+            $query->orderBy($sortColumn, $sortDirection);
+        } else {
+            $query->latest();
+        }
+
+        $archives = $query->paginate(10)->withQueryString();
         $departments = Department::all();
 
         return view('archives.index', compact('archives', 'departments'));

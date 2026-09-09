@@ -18,11 +18,36 @@ class BorrowingController extends Controller
             $query->where('borrower_user_id', $user->id);
         }
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('purpose', 'like', "%{$search}%")
+                  ->orWhereHas('archive', function ($q2) use ($search) {
+                      $q2->where('title', 'like', "%{$search}%")
+                         ->orWhere('box_number', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('borrower', function ($q3) use ($search) {
+                      $q3->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        $borrowings = $query->latest()->paginate(10)->withQueryString();
+        // Sorting
+        $sortColumn = $request->get('sort', 'borrowed_at');
+        $sortDirection = strtolower($request->get('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $allowedSorts = ['borrowed_at', 'expected_return_date', 'status'];
+
+        if (in_array($sortColumn, $allowedSorts)) {
+            $query->orderBy($sortColumn, $sortDirection);
+        } else {
+            $query->latest();
+        }
+
+        $borrowings = $query->paginate(10)->withQueryString();
 
         return view('borrowings.index', compact('borrowings'));
     }
