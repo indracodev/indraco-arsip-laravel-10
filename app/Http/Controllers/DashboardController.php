@@ -93,14 +93,47 @@ class DashboardController extends Controller
         $user = auth()->user();
         $search = trim($request->get('q', ''));
 
-        if (empty($search)) {
-            return response()->json([]);
-        }
-
         $query = Archive::with(['department', 'location.warehouse']);
 
         if ($user->isPicDept()) {
             $query->where('department_id', $user->department_id);
+        }
+
+        if (empty($search)) {
+            // Get recent documents as default suggestions
+            $recent = (clone $query)->latest()->take(5)->get()->map(function ($archive) {
+                return [
+                    'id' => $archive->id,
+                    'title' => $archive->title,
+                    'box_number' => $archive->box_number ?? 'Penomoran Pending',
+                    'dept_code' => $archive->department->code ?? 'GEN',
+                    'location' => $archive->location->full_location ?? 'Belum Ditentukan',
+                    'status' => $archive->status,
+                    'status_label' => match($archive->status) {
+                        'draft' => 'Draft',
+                        'pending_verification' => 'Antrean Verifikasi',
+                        'approved_booked' => 'Approved / Booking',
+                        'in_warehouse' => 'Di Gudang',
+                        'borrowed' => 'Dipinjam',
+                        'destroyed' => 'Dimusnahkan',
+                        default => ucfirst($archive->status)
+                    },
+                    'url' => route('archives.show', $archive->id),
+                ];
+            });
+
+            // Get dynamic keyword suggestions from departments & common archive topics
+            $deptCodes = Department::pluck('code')->toArray();
+            $suggestedKeywords = array_unique(array_merge(
+                ['Laporan Pajak', 'Faktur Pembelian', 'Surat Perjanjian', 'Berkas HRD', 'Laporan Keuangan', 'Audit'],
+                $deptCodes
+            ));
+
+            return response()->json([
+                'type' => 'suggestions',
+                'keywords' => array_values($suggestedKeywords),
+                'recent' => $recent
+            ]);
         }
 
         $archives = $query->where(function ($q) use ($search) {
@@ -133,6 +166,9 @@ class DashboardController extends Controller
                 ];
             });
 
-        return response()->json($archives);
+        return response()->json([
+            'type' => 'results',
+            'items' => $archives
+        ]);
     }
 }
