@@ -120,7 +120,7 @@
                             </div>
                         </th>
                         <th class="py-3.5 px-4">Status Simpan</th>
-                        <th class="py-3.5 px-4 text-right">Eksekusi BAP</th>
+                        <th class="py-3.5 px-4 text-right whitespace-nowrap">Eksekusi BAP</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-sm">
@@ -140,14 +140,15 @@
                                 <span x-show="arc.status === 'destroyed'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Dimusnahkan</span>
                                 <span x-show="arc.status !== 'destroyed'" class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Jatuh Tempo</span>
                             </td>
-                            <td class="py-4 px-4 text-right">
+                            <td class="py-4 px-4 text-right whitespace-nowrap">
                                 <template x-if="arc.status !== 'destroyed'">
-                                    <a :href="'{{ url('/destructions/propose') }}/' + arc.id" class="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 font-black text-xs shadow-md transition inline-flex items-center gap-1">
-                                        <i data-lucide="file-x" class="w-4 h-4"></i> Proses BAP
+                                    <a :href="'{{ url('/destructions/propose') }}/' + arc.id" class="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 font-black text-xs shadow-md transition inline-flex items-center gap-1.5 whitespace-nowrap">
+                                        <i data-lucide="file-x" class="w-4 h-4"></i>
+                                        <span>Proses BAP</span>
                                     </a>
                                 </template>
                                 <template x-if="arc.status === 'destroyed'">
-                                    <span class="text-xs text-slate-500 font-bold">BAP Prosedur</span>
+                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">BAP Prosedur</span>
                                 </template>
                             </td>
                         </tr>
@@ -195,7 +196,7 @@
                         <th class="py-3.5 px-4">Tanggal Eksekusi</th>
                         <th class="py-3.5 px-4">Metode Pemusnahan</th>
                         <th class="py-3.5 px-4">Eksekutor Gudang</th>
-                        <th class="py-3.5 px-4 text-right">Cetak BAP</th>
+                        <th class="py-3.5 px-4 text-right whitespace-nowrap">Cetak BAP</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-sm">
@@ -209,9 +210,10 @@
                             <td class="py-4 px-4 text-xs text-slate-700 dark:text-slate-300 font-medium" x-text="dLog.destruction_date"></td>
                             <td class="py-4 px-4 text-xs text-slate-700 dark:text-slate-300 font-medium" x-text="dLog.method"></td>
                             <td class="py-4 px-4 text-xs text-slate-700 dark:text-slate-300 font-medium" x-text="dLog.proposed_by ? dLog.proposed_by.name : 'Gudang Specialist'"></td>
-                            <td class="py-4 px-4 text-right">
-                                <a :href="'{{ url('/destructions/bap') }}/' + dLog.id" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-extrabold text-xs transition inline-flex items-center gap-1">
-                                    <i data-lucide="printer" class="w-4 h-4"></i> Cetak BAP
+                            <td class="py-4 px-4 text-right whitespace-nowrap">
+                                <a :href="'{{ url('/destructions/bap') }}/' + dLog.id" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-extrabold text-xs transition inline-flex items-center gap-1.5 whitespace-nowrap">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                    <span>Cetak BAP</span>
                                 </a>
                             </td>
                         </tr>
