@@ -129,47 +129,85 @@
 
                         <td class="py-4 px-4 whitespace-nowrap">
                             @if($bLog->status === 'requested')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Diajukan</span>
+                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Diajukan User</span>
+                            @elseif($bLog->status === 'dept_approved')
+                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300 border border-cyan-500/30">Disetujui Dept</span>
                             @elseif($bLog->status === 'approved')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Disetujui</span>
+                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Disetujui Gudang</span>
                             @elseif($bLog->status === 'dispatched')
                                 <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Sedang Dipinjam</span>
                             @elseif($bLog->status === 'returned')
                                 <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/30">Dikembalikan</span>
                             @endif
+
+                            @if($bLog->scan_approval_borrow)
+                                <a href="{{ asset('storage/' . $bLog->scan_approval_borrow) }}" target="_blank" class="block text-[10px] text-amber-600 dark:text-amber-400 font-bold hover:underline mt-1">
+                                    <i data-lucide="file-check" class="w-3 h-3 inline"></i> Scan Approval
+                                </a>
+                            @endif
                         </td>
 
                         <td class="py-4 px-4 text-right">
+                            <!-- Step 1 Approval: PIC Departemen / Admin -->
+                            @if($bLog->status === 'requested' && (auth()->user()->isSuperAdmin() || (auth()->user()->isPicDept() && auth()->user()->department_id === $bLog->archive->department_id)))
+                                <button onclick="document.getElementById('deptApproveModal-{{ $bLog->id }}').classList.remove('hidden')" type="button" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1">
+                                    <span>Approve Dept</span>
+                                </button>
+
+                                <!-- Modal Dept Approve -->
+                                <div id="deptApproveModal-{{ $bLog->id }}" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 text-left">
+                                    <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+                                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Persetujuan Peminjaman oleh Departemen</h3>
+                                        <form action="{{ route('borrowings.dept_approve', $bLog) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                            @csrf
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Upload Scan Bukti Approval Peminjaman (Opsional)</label>
+                                                <input type="file" name="scan_approval_borrow" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white">
+                                            </div>
+                                            <div class="flex justify-end gap-2">
+                                                <button type="button" onclick="document.getElementById('deptApproveModal-{{ $bLog->id }}').classList.add('hidden')" class="px-4 py-2 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400 text-xs rounded-xl font-bold">Batal</button>
+                                                <button type="submit" class="px-4 py-2 bg-cyan-600 text-white text-xs rounded-xl font-black">Setujui Peminjaman</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Step 2 Approval & Output: PIC Gudang / Admin -->
                             @if(auth()->user()->isPicGudang() || auth()->user()->isSuperAdmin())
-                                @if($bLog->status === 'requested')
-                                <form action="{{ route('borrowings.approve', $bLog) }}" method="POST" class="inline" @submit="submitting = true">
-                                    @csrf
-                                    <button type="submit" :disabled="submitting" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1 disabled:opacity-50">
-                                        <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="submitting"></i>
-                                        <span>Approve</span>
+                                @if($bLog->status === 'requested' && !auth()->user()->isPicDept())
+                                    <span class="text-xs text-amber-600 font-semibold block">Menunggu Approval Dept</span>
+                                @elseif($bLog->status === 'dept_approved' || $bLog->status === 'approved')
+                                    <button onclick="document.getElementById('dispatchModal-{{ $bLog->id }}').classList.remove('hidden')" type="button" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1">
+                                        <span>Pengeluaran Berkas (Dispatch)</span>
                                     </button>
-                                </form>
-                                @elseif($bLog->status === 'approved')
-                                <form action="{{ route('borrowings.dispatch', $bLog) }}" method="POST" class="inline" @submit="submitting = true">
-                                    @csrf
-                                    <button type="submit" :disabled="submitting" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1 disabled:opacity-50">
-                                        <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="submitting"></i>
-                                        <span>Serahkan Berkas (Dispatch)</span>
-                                    </button>
-                                </form>
+
+                                    <!-- Modal Dispatch Gudang -->
+                                    <div id="dispatchModal-{{ $bLog->id }}" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 text-left">
+                                        <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+                                            <h3 class="text-base font-bold text-slate-900 dark:text-white">Konfirmasi Pengeluaran Berkas Fisik Gudang</h3>
+                                            <form action="{{ route('borrowings.dispatch', $bLog) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                                @csrf
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Upload Scan Formulir Approval / Tanda Terima (Opsional)</label>
+                                                    <input type="file" name="scan_approval_borrow" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white">
+                                                </div>
+                                                <div class="flex justify-end gap-2">
+                                                    <button type="button" onclick="document.getElementById('dispatchModal-{{ $bLog->id }}').classList.add('hidden')" class="px-4 py-2 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400 text-xs rounded-xl font-bold">Batal</button>
+                                                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white text-xs rounded-xl font-black">Sahkan & Keluarkan Berkas</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 @elseif($bLog->status === 'dispatched')
-                                <form action="{{ route('borrowings.return', $bLog) }}" method="POST" class="inline" @submit="submitting = true">
-                                    @csrf
-                                    <button type="submit" onclick="return confirm('Konfirmasi pengembalian berkas fisik ke gudang?')" :disabled="submitting" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1 disabled:opacity-50">
-                                        <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="submitting"></i>
-                                        <span>Konfirmasi Kembali</span>
-                                    </button>
-                                </form>
-                                @else
-                                <span class="text-xs text-slate-500 font-bold">Selesai</span>
+                                    <form action="{{ route('borrowings.return', $bLog) }}" method="POST" class="inline" @submit="submitting = true">
+                                        @csrf
+                                        <button type="submit" onclick="return confirm('Konfirmasi pengembalian berkas fisik ke gudang?')" :disabled="submitting" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-lg transition shadow-sm inline-flex items-center gap-1 disabled:opacity-50">
+                                            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" x-show="submitting"></i>
+                                            <span>Konfirmasi Kembali</span>
+                                        </button>
+                                    </form>
                                 @endif
-                            @else
-                                <span class="text-xs text-slate-500 font-semibold">Monitoring</span>
                             @endif
                         </td>
                     </tr>

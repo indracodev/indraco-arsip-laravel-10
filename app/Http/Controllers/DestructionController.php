@@ -37,8 +37,10 @@ class DestructionController extends Controller
 
     public function propose(Request $request, Archive $archive)
     {
-        if (!auth()->user()->isPicGudang() && !auth()->user()->isSuperAdmin()) {
-            abort(403);
+        $user = auth()->user();
+
+        if (!$user->isPicGudang() && !$user->isSuperAdmin() && !$user->isPicDept()) {
+            abort(403, 'Akses ditolak.');
         }
 
         $validated = $request->validate([
@@ -46,12 +48,18 @@ class DestructionController extends Controller
             'destruction_date' => 'required|date',
             'method' => 'required|string|max:100',
             'notes' => 'nullable|string',
-            'certificate_file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
+            'certificate_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'scan_approval_destruction' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
         ]);
 
         $certPath = null;
         if ($request->hasFile('certificate_file')) {
             $certPath = $request->file('certificate_file')->store('bap_certificates', 'public');
+        }
+
+        $scanApprovalPath = null;
+        if ($request->hasFile('scan_approval_destruction')) {
+            $scanApprovalPath = $request->file('scan_approval_destruction')->store('destruction_scans', 'public');
         }
 
         $archive->update([
@@ -65,12 +73,15 @@ class DestructionController extends Controller
 
         DestructionLog::create([
             'archive_id' => $archive->id,
-            'proposed_by_user_id' => auth()->id(),
-            'approved_by_dept_pic_id' => auth()->id(),
+            'proposed_by_user_id' => $user->id,
+            'department_approval_by' => $user->id,
+            'department_approved_at' => now(),
+            'approved_by_dept_pic_id' => $user->id,
             'bap_number' => $validated['bap_number'],
             'destruction_date' => $validated['destruction_date'],
             'method' => $validated['method'],
             'certificate_file' => $certPath,
+            'scan_approval_destruction' => $scanApprovalPath,
             'notes' => $validated['notes'],
         ]);
 
@@ -80,7 +91,47 @@ class DestructionController extends Controller
 
     public function showBap(DestructionLog $destructionLog)
     {
-        $destructionLog->load(['archive.department', 'proposedBy', 'approvedBy', 'archive.location']);
+        $destructionLog->load(['archive.department', 'proposedBy', 'approvedBy', 'departmentApprovedBy', 'archive.location']);
         return view('destructions.bap', compact('destructionLog'));
+    }
+
+    public function extendForm(Archive $archive)
+    {
+        return view('destructions.extend', compact('archive'));
+    }
+
+    public function extendStore(Request $request, Archive $archive)
+    {
+        $validated = $request->validate([
+            'additional_years' => 'required|integer|min:1|max:5',
+            'extension_reason' => 'required|string|max:1000',
+            'scan_extension_form' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        $scanExtensionPath = $archive->scan_extension_form;
+        if ($request->hasFile('scan_extension_form')) {
+            $scanExtensionPath = $request->file('scan_extension_form')->store('archive_extensions', 'public');
+        }
+
+        $newRetentionYears = min(5, $archive->retention_years + (int)$validated['additional_years']);
+        $endDate = Carbon::parse($archive->period_end_date);
+        $newExpiryDate = $endDate->copy()->addYears($newRetentionYears);
+
+        $archive->update([
+            'retention_years' => $newRetentionYears,
+            'retention_expiry_date' => $newExpiryDate,
+            'extension_reason' => $validated['extension_reason'],
+            'scan_extension_form' => $scanExtensionPath,
+            'status' => $archive->status === 'pending_destruction' ? 'in_warehouse' : $archive->status,
+        ]);
+
+        return redirect()->route('destructions.index')
+            ->with('success', "Masa simpan berkas '{$archive->title}' berhasil diperpanjang (+{$validated['additional_years']} tahun). Expiry baru: {$newExpiryDate->format('d M Y')}.");
+    }
+
+    public function extendPrint(Archive $archive)
+    {
+        $archive->load(['department', 'location.warehouse', 'creator']);
+        return view('destructions.print_extension', compact('archive'));
     }
 }

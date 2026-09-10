@@ -93,6 +93,20 @@
                 <span class="text-slate-500 font-semibold block">Catatan Pelaksanaan & Saksi:</span>
                 <span class="font-medium text-slate-800">{{ $destructionLog->notes ?? 'Pemusnahan berjalan sesuai SOP.' }}</span>
             </div>
+            @if($destructionLog->scan_approval_destruction || $destructionLog->certificate_file)
+            <div class="sm:col-span-2 border-t border-slate-200 pt-2 flex flex-wrap gap-4 no-print">
+                @if($destructionLog->scan_approval_destruction)
+                <a href="{{ asset('storage/' . $destructionLog->scan_approval_destruction) }}" target="_blank" class="text-xs font-bold text-amber-700 underline">
+                    Lihat Scan Approval Pemusnahan
+                </a>
+                @endif
+                @if($destructionLog->certificate_file)
+                <a href="{{ asset('storage/' . $destructionLog->certificate_file) }}" target="_blank" class="text-xs font-bold text-rose-700 underline">
+                    Lihat Lampiran Scan BAP / Dokumentasi
+                </a>
+                @endif
+            </div>
+            @endif
         </div>
 
         <!-- Closing Statement -->
@@ -114,7 +128,7 @@
             <div class="space-y-12">
                 <span class="text-slate-600 block">Disetujui Oleh,<br><strong>Head of Department</strong></span>
                 <div class="pt-4 border-b border-slate-400 max-w-[180px] mx-auto">
-                    <span class="font-bold text-slate-900 text-sm">{{ $destructionLog->approvedBy->name ?? 'PIC Departemen' }}</span>
+                    <span class="font-bold text-slate-900 text-sm">{{ $destructionLog->departmentApprovedBy->name ?? $destructionLog->approvedBy->name ?? 'PIC Departemen' }}</span>
                 </div>
             </div>
 

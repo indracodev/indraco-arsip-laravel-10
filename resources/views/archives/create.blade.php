@@ -23,7 +23,20 @@
         <form action="{{ route('archives.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Company Name -->
+                <div>
+                    <label for="company_name" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
+                        Perusahaan / Entitas Indraco <span class="text-rose-500">*</span>
+                    </label>
+                    <select name="company_name" id="company_name" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition font-medium">
+                        <option value="PT Indraco Global" {{ old('company_name') == 'PT Indraco Global' ? 'selected' : '' }}>PT Indraco Global</option>
+                        <option value="PT Indraco Trading" {{ old('company_name') == 'PT Indraco Trading' ? 'selected' : '' }}>PT Indraco Trading</option>
+                        <option value="PT Indraco Enterprise" {{ old('company_name') == 'PT Indraco Enterprise' ? 'selected' : '' }}>PT Indraco Enterprise</option>
+                        <option value="PT Indraco International" {{ old('company_name') == 'PT Indraco International' ? 'selected' : '' }}>PT Indraco International</option>
+                    </select>
+                </div>
+
                 <!-- Department Selection -->
                 <div>
                     <label for="department_id" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
@@ -49,29 +62,45 @@
                     @endif
                 </div>
 
-                <!-- Archive Title -->
+                <!-- Document Type -->
                 <div>
-                    <label for="title" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
-                        Judul / Nama Berkas Arsip <span class="text-rose-500">*</span>
+                    <label for="document_type" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
+                        Jenis Dokumen <span class="text-rose-500">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        name="title" 
-                        id="title" 
-                        value="{{ old('title') }}" 
-                        required
-                        placeholder="Contoh: Laporan Keuangan & Faktur Pajak Q1 2026" 
-                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500 transition font-medium"
-                    >
-                    @error('title') <span class="text-rose-500 text-xs mt-1 block font-semibold">{{ $message }}</span> @enderror
+                    <select name="document_type" id="document_type" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition font-medium">
+                        <option value="PR" {{ old('document_type') == 'PR' ? 'selected' : '' }}>PR (Purchase Requisition)</option>
+                        <option value="ABSENSI" {{ old('document_type') == 'ABSENSI' ? 'selected' : '' }}>ABSENSI</option>
+                        <option value="UTILITY" {{ old('document_type') == 'UTILITY' ? 'selected' : '' }}>UTILITY</option>
+                        <option value="DATA SAMPLE" {{ old('document_type') == 'DATA SAMPLE' ? 'selected' : '' }}>DATA SAMPLE</option>
+                        <option value="FAKTUR" {{ old('document_type') == 'FAKTUR' ? 'selected' : '' }}>FAKTUR / INVOICE</option>
+                        <option value="KONTRAK" {{ old('document_type') == 'KONTRAK' ? 'selected' : '' }}>KONTRAK / PERJANJIAN</option>
+                        <option value="LAINNYA" {{ old('document_type') == 'LAINNYA' ? 'selected' : '' }}>LAINNYA</option>
+                    </select>
                 </div>
+            </div>
+
+            <!-- Archive Title -->
+            <div>
+                <label for="title" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
+                    Judul / Nama Berkas Arsip <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    id="title" 
+                    value="{{ old('title') }}" 
+                    required
+                    placeholder="Contoh: Laporan Keuangan & Faktur Pajak Q1 2026" 
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500 transition font-medium"
+                >
+                @error('title') <span class="text-rose-500 text-xs mt-1 block font-semibold">{{ $message }}</span> @enderror
             </div>
 
             <!-- Period Range -->
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 space-y-4">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">Periode Berkas Dokumen</span>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
                         <label for="period_start_date" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Tanggal Mulai <span class="text-rose-500">*</span></label>
                         <input 
@@ -97,7 +126,19 @@
                     </div>
 
                     <div>
-                        <label for="period_text" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Label Periode Custom (Opsional)</label>
+                        <label for="period_yy_mm" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Format YY-MM</label>
+                        <input 
+                            type="text" 
+                            name="period_yy_mm" 
+                            id="period_yy_mm" 
+                            value="{{ old('period_yy_mm', date('y-m')) }}" 
+                            placeholder="e.g. 26-03" 
+                            class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 transition font-medium"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="period_text" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">Label Periode Custom</label>
                         <input 
                             type="text" 
                             name="period_text" 
@@ -123,11 +164,11 @@
                             id="retention_years" 
                             value="{{ old('retention_years', 5) }}" 
                             min="1" 
-                            max="50" 
+                            max="5" 
                             required 
                             class="w-28 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition font-bold"
                         >
-                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Tahun sejak tanggal akhir periode berkas</span>
+                        <span class="text-xs text-amber-600 dark:text-amber-400 font-bold">Maksimal 5 Tahun per ketentuan revisi gudang</span>
                     </div>
                 </div>
 
@@ -162,19 +203,52 @@
                 >{{ old('content_description') }}</textarea>
             </div>
 
-            <!-- Optional Attachment File Scan -->
-            <div>
-                <label for="file" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
-                    Upload Scan Berkas Digital (Opsional)
-                </label>
-                <input 
-                    type="file" 
-                    name="file" 
-                    id="file" 
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.zip"
-                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-700 dark:file:text-amber-400 hover:file:bg-amber-500/30"
-                >
-                <span class="text-[11px] text-slate-500 dark:text-slate-500 mt-1 block">Format didukung: PDF, JPG, PNG, DOC, ZIP (Maksimal 10MB)</span>
+            <!-- Attachment Scans section -->
+            <div class="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 space-y-4">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400 block flex items-center gap-1.5">
+                    <i data-lucide="file-check" class="w-4 h-4"></i> Upload Berkas Digital & Scan Formulir
+                </span>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="scan_input_form" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">
+                            Scan Formulir Input Arsip (Image/PDF)
+                        </label>
+                        <input 
+                            type="file" 
+                            name="scan_input_form" 
+                            id="scan_input_form" 
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-700 dark:file:text-amber-400"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="scan_approval_input" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">
+                            Scan Bukti Approval Input (Image/PDF)
+                        </label>
+                        <input 
+                            type="file" 
+                            name="scan_approval_input" 
+                            id="scan_approval_input" 
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-700 dark:file:text-amber-400"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="file" class="block text-xs font-bold text-slate-700 dark:text-slate-400 mb-1">
+                            Lampiran Lampiran Digital Lainnya
+                        </label>
+                        <input 
+                            type="file" 
+                            name="file" 
+                            id="file" 
+                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.zip"
+                            class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-500/20 file:text-slate-700 dark:file:text-slate-400"
+                        >
+                    </div>
+                </div>
             </div>
 
             <!-- Form Actions -->

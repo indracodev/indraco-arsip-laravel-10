@@ -18,6 +18,10 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <a href="{{ route('archives.print_sticker', $archive) }}" target="_blank" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-2">
+                <i data-lucide="printer" class="w-4 h-4"></i> Cetak Stiker Box Label
+            </a>
+
             @if($archive->status === 'in_warehouse')
             <a href="{{ route('borrowings.create', ['archive_id' => $archive->id]) }}" class="px-4 py-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-xs font-bold transition flex items-center gap-2">
                 <i data-lucide="file-symlink" class="w-4 h-4"></i> Ajukan Pinjam Berkas
@@ -163,10 +167,20 @@
                     <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">{{ $archive->title }}</h2>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <span class="text-slate-500 dark:text-slate-400 block mb-1">Perusahaan / Entitas:</span>
+                        <span class="font-bold text-slate-900 dark:text-white text-sm">{{ $archive->company_name ?? 'PT Indraco' }}</span>
+                    </div>
+
                     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span class="text-slate-500 dark:text-slate-400 block mb-1">Departemen Pemilik:</span>
                         <span class="font-bold text-slate-900 dark:text-white text-sm">{{ $archive->department->name }} ({{ $archive->department->code }})</span>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <span class="text-slate-500 dark:text-slate-400 block mb-1">Jenis Dokumen:</span>
+                        <span class="font-bold text-slate-900 dark:text-white text-sm">{{ $archive->document_type ?? 'UMUM' }}</span>
                     </div>
 
                     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -176,7 +190,12 @@
 
                     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span class="text-slate-500 dark:text-slate-400 block mb-1">Periode Dokumen:</span>
-                        <span class="font-bold text-amber-600 dark:text-amber-400 text-sm">{{ $archive->period_text ?? $archive->period_start_date->format('M Y') }}</span>
+                        <span class="font-bold text-amber-600 dark:text-amber-400 text-sm">
+                            {{ $archive->period_text ?? $archive->period_start_date->format('M Y') }}
+                            @if($archive->period_yy_mm)
+                                <span class="font-mono text-xs bg-amber-500/20 px-1.5 py-0.5 rounded ml-1">({{ $archive->period_yy_mm }})</span>
+                            @endif
+                        </span>
                     </div>
 
                     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -192,21 +211,72 @@
                     </div>
                 </div>
 
-                <!-- Digital Attachment -->
-                @if($archive->file_path)
-                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="file-check" class="w-6 h-6 text-amber-600 dark:text-amber-400"></i>
-                        <div>
-                            <span class="text-xs font-bold text-slate-900 dark:text-white block">Lampiran Scan Digital Tersedia</span>
-                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Scan dokumen digital fisik</span>
+                <!-- Digital Attachments & Scans -->
+                <div class="space-y-3 pt-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Dokumentasi Scan & Lampiran Digital:</span>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        @if($archive->scan_input_form)
+                        <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="file-check" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Scan Formulir Input</span>
+                                    <span class="text-[10px] text-slate-500">Form pendaftaran fisik</span>
+                                </div>
+                            </div>
+                            <a href="{{ asset('storage/' . $archive->scan_input_form) }}" target="_blank" class="px-2.5 py-1 bg-amber-500 text-slate-950 text-[11px] font-black rounded-lg hover:bg-amber-400 transition">
+                                Lihat Scan
+                            </a>
                         </div>
+                        @endif
+
+                        @if($archive->scan_approval_input)
+                        <div class="p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check-square" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Scan Approval Input</span>
+                                    <span class="text-[10px] text-slate-500">Bukti persetujuan PIC</span>
+                                </div>
+                            </div>
+                            <a href="{{ asset('storage/' . $archive->scan_approval_input) }}" target="_blank" class="px-2.5 py-1 bg-blue-500 text-white text-[11px] font-black rounded-lg hover:bg-blue-400 transition">
+                                Lihat Scan
+                            </a>
+                        </div>
+                        @endif
+
+                        @if($archive->scan_extension_form)
+                        <div class="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="clock" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Scan Form Perpanjangan</span>
+                                    <span class="text-[10px] text-slate-500">Perpanjangan masa simpan</span>
+                                </div>
+                            </div>
+                            <a href="{{ asset('storage/' . $archive->scan_extension_form) }}" target="_blank" class="px-2.5 py-1 bg-purple-500 text-white text-[11px] font-black rounded-lg hover:bg-purple-400 transition">
+                                Lihat Form
+                            </a>
+                        </div>
+                        @endif
+
+                        @if($archive->file_path)
+                        <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="paperclip" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white block">Lampiran Digital</span>
+                                    <span class="text-[10px] text-slate-500">File softcopy</span>
+                                </div>
+                            </div>
+                            <a href="{{ asset('storage/' . $archive->file_path) }}" target="_blank" class="px-2.5 py-1 bg-emerald-500 text-slate-950 text-[11px] font-black rounded-lg hover:bg-emerald-400 transition">
+                                Unduh Softcopy
+                            </a>
+                        </div>
+                        @endif
                     </div>
-                    <a href="{{ asset('storage/' . $archive->file_path) }}" target="_blank" class="px-3 py-1.5 bg-amber-500 text-slate-950 text-xs font-black rounded-lg hover:bg-amber-400 transition shadow-sm">
-                        Buka / Unduh File
-                    </a>
                 </div>
-                @endif
             </div>
         </div>
 

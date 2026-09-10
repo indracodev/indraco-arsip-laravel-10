@@ -98,6 +98,35 @@ class BorrowingController extends Controller
             ->with('success', 'Permintaan peminjaman berkas arsip telah diajukan ke PIC Gudang.');
     }
 
+    public function deptApprove(BorrowingLog $borrowing, Request $request)
+    {
+        $user = auth()->user();
+
+        // Must be PIC Dept of archive's department or Admin
+        if (!$user->isSuperAdmin() && (!$user->isPicDept() || $user->department_id !== $borrowing->archive->department_id)) {
+            abort(403, 'Hanya PIC Departemen pemilik berkas atau Admin yang dapat menyetujui peminjaman ini.');
+        }
+
+        $request->validate([
+            'scan_approval_borrow' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        $scanPath = $borrowing->scan_approval_borrow;
+        if ($request->hasFile('scan_approval_borrow')) {
+            $scanPath = $request->file('scan_approval_borrow')->store('borrowing_scans', 'public');
+        }
+
+        $borrowing->update([
+            'status' => 'dept_approved',
+            'department_approval_by' => $user->id,
+            'department_approved_at' => now(),
+            'scan_approval_borrow' => $scanPath,
+        ]);
+
+        return redirect()->route('borrowings.index')
+            ->with('success', 'Persetujuan Departemen berhasil disahkan. Pengajuan kini siap dikirimkan ke PIC Gudang.');
+    }
+
     public function approve(BorrowingLog $borrowing)
     {
         if (!auth()->user()->isPicGudang() && !auth()->user()->isSuperAdmin()) {
@@ -110,19 +139,29 @@ class BorrowingController extends Controller
         ]);
 
         return redirect()->route('borrowings.index')
-            ->with('success', 'Permintaan peminjaman disetujui. Silakan persiapkan berkas fisik untuk diserahkan.');
+            ->with('success', 'Permintaan peminjaman disetujui Gudang. Silakan persiapkan berkas fisik untuk diserahkan.');
     }
 
-    public function dispatch(BorrowingLog $borrowing)
+    public function dispatch(BorrowingLog $borrowing, Request $request)
     {
         if (!auth()->user()->isPicGudang() && !auth()->user()->isSuperAdmin()) {
             abort(403);
+        }
+
+        $request->validate([
+            'scan_approval_borrow' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        $scanPath = $borrowing->scan_approval_borrow;
+        if ($request->hasFile('scan_approval_borrow')) {
+            $scanPath = $request->file('scan_approval_borrow')->store('borrowing_scans', 'public');
         }
 
         $borrowing->update([
             'status' => 'dispatched',
             'borrow_date' => now(),
             'pic_gudang_id' => auth()->id(),
+            'scan_approval_borrow' => $scanPath,
         ]);
 
         $borrowing->archive->update([

@@ -83,14 +83,19 @@ class ArchiveController extends Controller
 
         $validated = $request->validate([
             'department_id' => 'required|exists:departments,id',
+            'company_name' => 'nullable|string|max:150',
+            'document_type' => 'nullable|string|max:100',
             'title' => 'required|string|max:255',
             'period_start_date' => 'required|date',
             'period_end_date' => 'required|date|after_or_equal:period_start_date',
+            'period_yy_mm' => 'nullable|string|max:7',
             'period_text' => 'nullable|string|max:100',
             'content_description' => 'required|string',
-            'retention_years' => 'required|integer|min:1|max:50',
+            'retention_years' => 'required|integer|min:1|max:5', // Strictly max 5 years per revisi 1
             'physical_condition' => 'required|string|max:100',
             'file' => 'nullable|file|mimes:pdf,jpg,png,doc,docx,zip|max:10240',
+            'scan_input_form' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'scan_approval_input' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
         ]);
 
         if ($user->isPicDept()) {
@@ -100,6 +105,16 @@ class ArchiveController extends Controller
         $filePath = null;
         if ($request->hasFile('file')) {
             $filePath = $request->file('file')->store('archive_digital', 'public');
+        }
+
+        $scanInputFormPath = null;
+        if ($request->hasFile('scan_input_form')) {
+            $scanInputFormPath = $request->file('scan_input_form')->store('archive_scans', 'public');
+        }
+
+        $scanApprovalInputPath = null;
+        if ($request->hasFile('scan_approval_input')) {
+            $scanApprovalInputPath = $request->file('scan_approval_input')->store('archive_scans', 'public');
         }
 
         // Calculate retention expiry date
@@ -112,18 +127,29 @@ class ArchiveController extends Controller
             $periodText = Carbon::parse($validated['period_start_date'])->isoFormat('MMMM Y') . ' - ' . $endDate->isoFormat('MMMM Y');
         }
 
+        // Generate period YY-MM if empty (e.g., "26-03")
+        $periodYyMm = $validated['period_yy_mm'] ?? null;
+        if (empty($periodYyMm)) {
+            $periodYyMm = $endDate->format('y-m');
+        }
+
         Archive::create([
             'department_id' => $validated['department_id'],
+            'company_name' => $validated['company_name'] ?? 'PT Indraco',
+            'document_type' => $validated['document_type'] ?? 'UMUM',
             'created_by_user_id' => $user->id,
             'title' => $validated['title'],
             'period_start_date' => $validated['period_start_date'],
             'period_end_date' => $validated['period_end_date'],
             'period_text' => $periodText,
+            'period_yy_mm' => $periodYyMm,
             'content_description' => $validated['content_description'],
             'retention_years' => $validated['retention_years'],
             'retention_expiry_date' => $retentionExpiryDate,
             'physical_condition' => $validated['physical_condition'],
             'file_path' => $filePath,
+            'scan_input_form' => $scanInputFormPath,
+            'scan_approval_input' => $scanApprovalInputPath,
             'status' => 'pending_verification', // Submit directly to PIC Gudang queue
         ]);
 
@@ -148,6 +174,12 @@ class ArchiveController extends Controller
         $locations = WarehouseLocation::with('warehouse')->get();
 
         return view('archives.show', compact('archive', 'locations'));
+    }
+
+    public function printSticker(Archive $archive)
+    {
+        $archive->load(['department', 'location.warehouse', 'creator']);
+        return view('archives.print_sticker', compact('archive'));
     }
 
     public function verify(Request $request, Archive $archive, NumberingService $numberingService)

@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/archives/create', [ArchiveController::class, 'create'])->name('archives.create');
     Route::post('/archives', [ArchiveController::class, 'store'])->name('archives.store');
     Route::get('/archives/{archive}', [ArchiveController::class, 'show'])->name('archives.show');
+    Route::get('/archives/{archive}/print-sticker', [ArchiveController::class, 'printSticker'])->name('archives.print_sticker');
     Route::post('/archives/{archive}/verify', [ArchiveController::class, 'verify'])->name('archives.verify');
     Route::post('/archives/{archive}/checkin', [ArchiveController::class, 'checkin'])->name('archives.checkin');
 
@@ -45,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
     Route::get('/borrowings/create', [BorrowingController::class, 'create'])->name('borrowings.create');
     Route::post('/borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
+    Route::post('/borrowings/{borrowing}/dept-approve', [BorrowingController::class, 'deptApprove'])->name('borrowings.dept_approve');
     Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])->name('borrowings.approve');
     Route::post('/borrowings/{borrowing}/dispatch', [BorrowingController::class, 'dispatch'])->name('borrowings.dispatch');
     Route::post('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnArchive'])->name('borrowings.return');
@@ -54,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/destructions/propose/{archive}', [DestructionController::class, 'proposeForm'])->name('destructions.propose');
     Route::post('/destructions/propose/{archive}', [DestructionController::class, 'propose'])->name('destructions.store');
     Route::get('/destructions/bap/{destructionLog}', [DestructionController::class, 'showBap'])->name('destructions.bap');
+    Route::get('/destructions/extend/{archive}', [DestructionController::class, 'extendForm'])->name('destructions.extend_form');
+    Route::post('/destructions/extend/{archive}', [DestructionController::class, 'extendStore'])->name('destructions.extend_store');
+    Route::get('/destructions/extend-print/{archive}', [DestructionController::class, 'extendPrint'])->name('destructions.extend_print');
 
     // Global Audit Trail Logs
     Route::get('/logs', [AuditLogController::class, 'index'])->name('logs.index');

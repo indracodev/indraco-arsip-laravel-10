@@ -102,18 +102,33 @@
                 >{{ old('notes') }}</textarea>
             </div>
 
-            <!-- Certificate File Upload -->
-            <div>
-                <label for="certificate_file" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
-                    Upload File Lampiran BAP / Foto Pelaksanaan (Opsional)
-                </label>
-                <input 
-                    type="file" 
-                    name="certificate_file" 
-                    id="certificate_file" 
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-500/20 file:text-rose-700 dark:file:text-rose-400 hover:file:bg-rose-500/30"
-                >
+            <!-- Scan Approval & Certificate File Upload -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="scan_approval_destruction" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
+                        Upload Scan Formulir Approval Pemusnahan (Image/PDF)
+                    </label>
+                    <input 
+                        type="file" 
+                        name="scan_approval_destruction" 
+                        id="scan_approval_destruction" 
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-700 dark:file:text-amber-400 hover:file:bg-amber-500/30"
+                    >
+                </div>
+
+                <div>
+                    <label for="certificate_file" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 mb-1.5">
+                        Upload Scan Berita Acara (BAP) / Foto Pelaksanaan (Image/PDF)
+                    </label>
+                    <input 
+                        type="file" 
+                        name="certificate_file" 
+                        id="certificate_file" 
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-500/20 file:text-rose-700 dark:file:text-rose-400 hover:file:bg-rose-500/30"
+                    >
+                </div>
             </div>
 
             <!-- Actions -->

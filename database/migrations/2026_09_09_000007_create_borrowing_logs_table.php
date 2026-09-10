@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('expected_return_date');
             $table->dateTime('actual_return_date')->nullable();
             $table->text('purpose');
-            $table->enum('status', ['requested', 'approved', 'dispatched', 'returned', 'rejected'])->default('requested');
+            $table->string('status', 50)->default('requested');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

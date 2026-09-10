@@ -142,13 +142,19 @@
                             </td>
                             <td class="py-4 px-4 text-right whitespace-nowrap">
                                 <template x-if="arc.status !== 'destroyed'">
-                                    <a :href="'{{ url('/destructions/propose') }}/' + arc.id" class="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 font-black text-xs shadow-md transition inline-flex items-center gap-1.5 whitespace-nowrap">
-                                        <i data-lucide="file-x" class="w-4 h-4"></i>
-                                        <span>Proses BAP</span>
-                                    </a>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a :href="'{{ url('/destructions/extend') }}/' + arc.id" class="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-bold text-xs transition inline-flex items-center gap-1.5 whitespace-nowrap">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                            <span>Perpanjang Masa Simpan</span>
+                                        </a>
+                                        <a :href="'{{ url('/destructions/propose') }}/' + arc.id" class="px-3.5 py-1.5 rounded-xl bg-rose-600 text-white hover:bg-rose-500 font-black text-xs shadow-md transition inline-flex items-center gap-1.5 whitespace-nowrap">
+                                            <i data-lucide="file-x" class="w-4 h-4"></i>
+                                            <span>Proses BAP</span>
+                                        </a>
+                                    </div>
                                 </template>
                                 <template x-if="arc.status === 'destroyed'">
-                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">BAP Prosedur</span>
+                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">BAP Prosedur Selesai</span>
                                 </template>
                             </td>
                         </tr>

@@ -16,19 +16,26 @@ class Archive extends Model
     protected $fillable = [
         'box_number',
         'department_id',
+        'company_name',
+        'document_type',
         'created_by_user_id',
         'title',
         'period_start_date',
         'period_end_date',
         'period_text',
+        'period_yy_mm',
         'content_description',
         'retention_years',
         'retention_expiry_date',
         'physical_condition',
         'file_path',
+        'scan_input_form',
+        'scan_approval_input',
         'warehouse_location_id',
         'status',
         'rejection_note',
+        'extension_reason',
+        'scan_extension_form',
     ];
 
     protected $casts = [
