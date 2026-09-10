@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(auth()->check() && auth()->user()->isPicDept() ? 'layouts.desktop_pic' : 'layouts.app')
 
 @section('title', 'Form Permintaan Peminjaman Arsip - DMS PT Indraco')
 

@@ -178,6 +178,11 @@ class ArchiveController extends Controller
 
     public function printSticker(Archive $archive)
     {
+        $user = auth()->user();
+        if ($user->isPicDept() && $archive->department_id !== $user->department_id) {
+            abort(403, 'Anda tidak memiliki akses ke label arsip departemen lain.');
+        }
+
         $archive->load(['department', 'location.warehouse', 'creator']);
         $archives = collect([$archive]);
         return view('archives.print_sticker', compact('archives', 'archive'));
@@ -185,6 +190,7 @@ class ArchiveController extends Controller
 
     public function printLabels(Request $request)
     {
+        $user = auth()->user();
         $ids = $request->input('ids');
 
         if (is_string($ids)) {
@@ -192,6 +198,11 @@ class ArchiveController extends Controller
         }
 
         $query = Archive::with(['department', 'location.warehouse', 'creator']);
+
+        // Scope to user's department if PIC Dept
+        if ($user->isPicDept()) {
+            $query->where('department_id', $user->department_id);
+        }
 
         if (!empty($ids) && is_array($ids)) {
             $query->whereIn('id', $ids);
