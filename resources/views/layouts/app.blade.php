@@ -60,6 +60,33 @@
 </head>
 <body class="h-full font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 selection:bg-amber-500 selection:text-slate-950" x-data="{ sidebarOpen: false }">
 
+    @if(session()->has('impersonator_id'))
+    @php
+        $impersonator = \App\Models\User::find(session('impersonator_id'));
+    @endphp
+    <div class="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2.5 shadow-md flex items-center justify-between z-50 text-xs font-bold border-b border-amber-600 sticky top-0">
+        <div class="flex items-center gap-2.5">
+            <span class="p-1.5 bg-slate-950 text-amber-400 rounded-lg shadow">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+            </span>
+            <div>
+                <span>Mode Impersonasi Aktif: Anda sedang login sebagai <strong class="underline font-black text-slate-950">{{ auth()->user()->name }}</strong> ({{ auth()->user()->role_label }} {{ auth()->user()->department ? '- ' . auth()->user()->department->code : '' }})</span>
+                @if($impersonator)
+                    <span class="opacity-80 block sm:inline text-[11px] sm:ml-2">| Akun Asli: <strong>{{ $impersonator->name }}</strong> (Super Admin)</span>
+                @endif
+            </div>
+        </div>
+
+        <form action="{{ route('impersonate.leave') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="px-3.5 py-1.5 bg-slate-950 hover:bg-slate-900 text-white rounded-xl text-xs font-black shadow transition flex items-center gap-1.5 shrink-0">
+                <i data-lucide="log-out" class="w-3.5 h-3.5 text-amber-400"></i>
+                Kembali ke SuperAdmin
+            </button>
+        </form>
+    </div>
+    @endif
+
     <div class="min-h-full flex flex-col">
         <!-- Top Navbar Header -->
         <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
@@ -196,10 +223,12 @@
                                 <i data-lucide="map" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
                                 Layout Gudang 2D (Canvas)
                             </a>
+                            @if(auth()->check() && auth()->user()->isSuperAdmin())
                             <a href="{{ route('master.numbering') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition {{ request()->routeIs('master.numbering') ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900' }}">
                                 <i data-lucide="binary" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
                                 Custom Engine Format Box
                             </a>
+                            @endif
                             <a href="{{ route('master.users') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition {{ request()->routeIs('master.users') ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900' }}">
                                 <i data-lucide="users" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                                 Kelola User & Hak Akses

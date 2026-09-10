@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 
 class NumberingFormatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->check() || !auth()->user()->isSuperAdmin()) {
+                abort(403, 'Akses khusus Super Admin.');
+            }
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $formats = NumberingFormat::all();

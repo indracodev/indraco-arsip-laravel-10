@@ -70,4 +70,47 @@ class UserController extends Controller
         return redirect()->route('master.users')
             ->with('success', "Pengguna {$user->name} berhasil dihapus.");
     }
+
+    public function impersonate(User $user)
+    {
+        $admin = auth()->user();
+
+        if (!$admin->isSuperAdmin()) {
+            abort(403, 'Hanya Super Admin yang dapat melakukan impersonasi user.');
+        }
+
+        if ($admin->id === $user->id) {
+            return back()->with('error', 'Anda tidak dapat meng-impersonasi akun Anda sendiri.');
+        }
+
+        // Store original admin ID in session if not already in impersonation mode
+        if (!session()->has('impersonator_id')) {
+            session(['impersonator_id' => $admin->id]);
+        }
+
+        // Log in as target user
+        auth()->login($user);
+
+        return redirect()->route('dashboard')
+            ->with('success', "Mode Impersonasi Aktif: Anda sekarang berinteraksi sebagai {$user->name} ({$user->role_label}).");
+    }
+
+    public function leaveImpersonate()
+    {
+        if (!session()->has('impersonator_id')) {
+            return redirect()->route('dashboard');
+        }
+
+        $adminId = session('impersonator_id');
+        $admin = User::findOrFail($adminId);
+
+        // Clear impersonator session
+        session()->forget('impersonator_id');
+
+        // Log back in as Super Admin
+        auth()->login($admin);
+
+        return redirect()->route('master.users')
+            ->with('success', "Selesai Impersonasi: Anda telah kembali ke akun SuperAdmin {$admin->name}.");
+    }
 }

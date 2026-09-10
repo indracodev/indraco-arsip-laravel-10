@@ -158,13 +158,23 @@
                                 </button>
 
                                 <template x-if="currentUserId !== usr.id">
-                                    <form :action="'{{ url('/master/users') }}/' + usr.id" method="POST" class="inline" @submit="submitting = true">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Hapus user pengguna ini?')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Hapus User">
-                                            <i data-lucide="user-minus" class="w-4 h-4"></i>
-                                        </button>
-                                    </form>
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <form :action="'{{ url('/master/users') }}/' + usr.id + '/impersonate'" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" onclick="return confirm('Login sebagai user ' + usr.name + ' (' + usr.email + ')?')" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 rounded-lg text-xs font-bold transition inline-flex items-center gap-1" title="Login Sebagai User Ini (Impersonate)">
+                                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+                                                <span>Login As</span>
+                                            </button>
+                                        </form>
+
+                                        <form :action="'{{ url('/master/users') }}/' + usr.id" method="POST" class="inline" @submit="submitting = true">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" onclick="return confirm('Hapus user pengguna ini?')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Hapus User">
+                                                <i data-lucide="user-minus" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </template>
                                 <template x-if="currentUserId === usr.id">
                                     <span class="text-xs text-slate-400 italic">Akun Anda</span>

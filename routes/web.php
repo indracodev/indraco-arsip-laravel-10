@@ -90,13 +90,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/warehouses/locations', [WarehouseController::class, 'storeLocation'])->name('warehouses.locations.store');
         Route::delete('/warehouses/locations/{location}', [WarehouseController::class, 'destroyLocation'])->name('warehouses.locations.destroy');
 
-        Route::get('/numbering', [NumberingFormatController::class, 'index'])->name('numbering');
-        Route::post('/numbering', [NumberingFormatController::class, 'store'])->name('numbering.store');
-        Route::put('/numbering/{numberingFormat}', [NumberingFormatController::class, 'update'])->name('numbering.update');
+        Route::get('/numbering', [NumberingFormatController::class, 'index'])->name('numbering')->middleware('role:admin');
+        Route::post('/numbering', [NumberingFormatController::class, 'store'])->name('numbering.store')->middleware('role:admin');
+        Route::put('/numbering/{numberingFormat}', [NumberingFormatController::class, 'update'])->name('numbering.update')->middleware('role:admin');
 
         Route::get('/users', [UserController::class, 'index'])->name('users');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('/users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate');
     });
+
+    // Leave Impersonate Route
+    Route::post('/impersonate/leave', [UserController::class, 'leaveImpersonate'])->name('impersonate.leave');
 });
