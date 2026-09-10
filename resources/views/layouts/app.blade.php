@@ -192,6 +192,10 @@
                                 <i data-lucide="warehouse" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
                                 Master Gudang & Rak
                             </a>
+                            <a href="{{ route('master.warehouses.layout') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition {{ request()->routeIs('master.warehouses.layout') ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900' }}">
+                                <i data-lucide="map" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                                Layout Gudang 2D (Canvas)
+                            </a>
                             <a href="{{ route('master.numbering') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold text-xs transition {{ request()->routeIs('master.numbering') ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900' }}">
                                 <i data-lucide="binary" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
                                 Custom Engine Format Box

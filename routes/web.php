@@ -10,6 +10,7 @@ use App\Http\Controllers\DestructionController;
 use App\Http\Controllers\NumberingFormatController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseLayoutController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,6 +63,15 @@ Route::middleware('auth')->group(function () {
 
     // Global Audit Trail Logs
     Route::get('/logs', [AuditLogController::class, 'index'])->name('logs.index');
+
+    // Layout Gudang Interactive Canvas & API
+    Route::get('/master/warehouses/layout', [WarehouseLayoutController::class, 'index'])->name('master.warehouses.layout');
+    Route::get('/api/warehouse/layout-data', [WarehouseLayoutController::class, 'apiLayoutData'])->name('api.warehouse.layout_data');
+    Route::post('/api/warehouse/locations/store', [WarehouseLayoutController::class, 'storeLocation'])->name('api.warehouse.locations.store');
+    Route::post('/api/warehouse/locations/{location}/book', [WarehouseLayoutController::class, 'bookLocation'])->name('api.warehouse.locations.book');
+    Route::post('/api/warehouse/locations/{location}/unbook', [WarehouseLayoutController::class, 'unbookLocation'])->name('api.warehouse.locations.unbook');
+    Route::post('/api/warehouse/locations/{location}/update', [WarehouseLayoutController::class, 'updateLocation'])->name('api.warehouse.locations.update');
+    Route::post('/api/warehouse/locations/{location}/delete', [WarehouseLayoutController::class, 'destroyLocation'])->name('api.warehouse.locations.delete');
 
     // Master Data Management (Admin & PIC Gudang)
     Route::middleware('role:admin,pic_gudang')->prefix('master')->name('master.')->group(function () {
