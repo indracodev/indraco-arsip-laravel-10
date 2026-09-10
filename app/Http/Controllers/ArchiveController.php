@@ -179,7 +179,50 @@ class ArchiveController extends Controller
     public function printSticker(Archive $archive)
     {
         $archive->load(['department', 'location.warehouse', 'creator']);
-        return view('archives.print_sticker', compact('archive'));
+        $archives = collect([$archive]);
+        return view('archives.print_sticker', compact('archives', 'archive'));
+    }
+
+    public function printLabels(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (is_string($ids)) {
+            $ids = array_filter(explode(',', $ids));
+        }
+
+        $query = Archive::with(['department', 'location.warehouse', 'creator']);
+
+        if (!empty($ids) && is_array($ids)) {
+            $query->whereIn('id', $ids);
+        } else {
+            // Apply search & department filter if no specific IDs passed
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('box_number', 'like', "%{$search}%")
+                      ->orWhere('period_text', 'like', "%{$search}%");
+                });
+            }
+            if ($request->filled('department_id')) {
+                $query->where('department_id', $request->department_id);
+            }
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+        }
+
+        $archives = $query->get();
+
+        if ($archives->isEmpty()) {
+            return redirect()->route('archives.index')
+                ->with('warning', 'Tidak ada data arsip yang ditemukan untuk dicetak label.');
+        }
+
+        $archive = $archives->first();
+
+        return view('archives.print_sticker', compact('archives', 'archive'));
     }
 
     public function verify(Request $request, Archive $archive, NumberingService $numberingService)

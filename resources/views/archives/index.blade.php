@@ -3,7 +3,14 @@
 @section('title', 'Katalog & Booking Arsip - DMS PT Indraco')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" x-data="{ 
+    selected: [], 
+    selectAll: false, 
+    allIds: [{{ $archives->pluck('id')->join(',') }}],
+    toggleAll() { 
+        this.selected = this.selectAll ? [...this.allIds] : []; 
+    } 
+}">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -14,10 +21,17 @@
             <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-medium">Cari, ajukan booking gudang, dan kelola masa simpan dokumen fisik & digital PT Indraco.</p>
         </div>
 
-        <a href="{{ route('archives.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            Buat Draft Pengajuan Arsip
-        </a>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('archives.print_labels') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs sm:text-sm border border-slate-300 dark:border-slate-700 shadow-sm transition">
+                <i data-lucide="printer" class="w-4 h-4 text-amber-500"></i>
+                Cetak Custom Label Box
+            </a>
+
+            <a href="{{ route('archives.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Buat Draft Pengajuan Arsip
+            </a>
+        </div>
     </div>
 
     <!-- Filter & Search Bar Card -->
@@ -89,12 +103,35 @@
         </form>
     </div>
 
+    <!-- Batch Actions Floating Toolbar -->
+    <div x-show="selected.length > 0" x-transition class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+        <div class="flex items-center gap-2">
+            <div class="p-1.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg">
+                <i data-lucide="check-square" class="w-5 h-5"></i>
+            </div>
+            <span class="text-xs font-bold text-slate-900 dark:text-white">
+                <span class="font-extrabold text-amber-600 dark:text-amber-400" x-text="selected.length"></span> berkas arsip terpilih untuk pencetakan label box.
+            </span>
+        </div>
+
+        <form action="{{ route('archives.print_labels') }}" method="GET" target="_blank" class="inline">
+            <input type="hidden" name="ids" :value="selected.join(',')">
+            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center gap-2">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                Cetak Label Box Terpilih (<span x-text="selected.length"></span>)
+            </button>
+        </form>
+    </div>
+
     <!-- Archives Catalog Grid -->
     <div class="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
+                        <th class="py-3.5 px-3 w-10 text-center">
+                            <input type="checkbox" x-model="selectAll" @change="toggleAll()" class="rounded border-slate-300 dark:border-slate-700 text-amber-500 focus:ring-0">
+                        </th>
                         @php
                             $curSort = request('sort', 'created_at');
                             $curDir = request('direction', 'desc');
@@ -149,6 +186,10 @@
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-sm">
                     @forelse($archives as $archive)
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition">
+                        <td class="py-4 px-3 text-center">
+                            <input type="checkbox" :value="{{ $archive->id }}" x-model="selected" class="rounded border-slate-300 dark:border-slate-700 text-amber-500 focus:ring-0">
+                        </td>
+
                         <td class="py-4 px-4 font-mono text-xs text-amber-600 dark:text-amber-400 font-extrabold">
                             @if($archive->box_number)
                                 <div class="flex items-center gap-1.5">
@@ -208,31 +249,38 @@
                             @endif
                         </td>
 
-                        <td class="py-4 px-4 whitespace-nowrap">
+                        <td class="py-3.5 px-4 whitespace-nowrap align-middle">
                             @if($archive->status === 'draft')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700">Draft</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700">Draft</span>
                             @elseif($archive->status === 'pending_verification')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Antrean Verifikasi</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/30">Antrean Verifikasi</span>
                             @elseif($archive->status === 'approved_booked')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Approved / Booked</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-500/30">Approved / Booked</span>
                             @elseif($archive->status === 'in_warehouse')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/30">Di Gudang</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/30">Di Gudang</span>
                             @elseif($archive->status === 'borrowed')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Dipinjam</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-500/30">Dipinjam</span>
                             @elseif($archive->status === 'destroyed')
-                                <span class="inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Dimusnahkan</span>
+                                <span class="inline-flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 border border-rose-500/30">Dimusnahkan</span>
                             @endif
                         </td>
 
-                        <td class="py-4 px-4 text-right">
-                            <a href="{{ route('archives.show', $archive) }}" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 hover:text-amber-700 text-xs font-bold transition inline-flex items-center gap-1">
-                                Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                            </a>
+                        <td class="py-3.5 px-4 text-right whitespace-nowrap align-middle">
+                            <div class="inline-flex items-center justify-end gap-2">
+                                <a href="{{ route('archives.print_sticker', $archive) }}" target="_blank" title="Cetak Label Box Container" class="h-8 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-sm">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+                                    <span>Label</span>
+                                </a>
+                                <a href="{{ route('archives.show', $archive) }}" class="h-8 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-amber-500 text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-sm">
+                                    <span>Detail</span>
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="py-12 text-center text-slate-500 dark:text-slate-500 space-y-2">
+                        <td colspan="9" class="py-12 text-center text-slate-500 dark:text-slate-500 space-y-2">
                             <i data-lucide="folder-search" class="w-12 h-12 mx-auto text-slate-400 dark:text-slate-600"></i>
                             <p class="text-sm font-semibold">Tidak ada berkas arsip yang ditemukan berdasarkan pencarian ini.</p>
                         </td>

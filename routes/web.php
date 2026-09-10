@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');
     Route::get('/archives/create', [ArchiveController::class, 'create'])->name('archives.create');
     Route::post('/archives', [ArchiveController::class, 'store'])->name('archives.store');
+    Route::get('/archives/print-labels', [ArchiveController::class, 'printLabels'])->name('archives.print_labels');
+    Route::post('/archives/print-labels', [ArchiveController::class, 'printLabels'])->name('archives.print_labels_post');
     Route::get('/archives/{archive}', [ArchiveController::class, 'show'])->name('archives.show');
     Route::get('/archives/{archive}/print-sticker', [ArchiveController::class, 'printSticker'])->name('archives.print_sticker');
     Route::post('/archives/{archive}/verify', [ArchiveController::class, 'verify'])->name('archives.verify');

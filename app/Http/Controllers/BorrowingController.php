@@ -57,7 +57,7 @@ class BorrowingController extends Controller
         $user = auth()->user();
 
         // Get archives available for borrowing (status in_warehouse)
-        $archivesQuery = Archive::where('status', 'in_warehouse');
+        $archivesQuery = Archive::with(['department', 'location.warehouse'])->where('status', 'in_warehouse');
 
         if ($user->isPicDept()) {
             $archivesQuery->where('department_id', $user->department_id);

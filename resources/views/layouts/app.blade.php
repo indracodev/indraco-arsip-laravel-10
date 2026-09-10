@@ -212,8 +212,7 @@
                 <!-- Footer Sidebar Info -->
                 <div class="shrink-0 p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-center">
                     <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                        &copy; {{ date('Y') }} PT Indraco System<br>
-                        <span class="text-slate-400 dark:text-slate-500">DMS Version 1.0.0</span>
+                        &copy; {{ date('Y') }} DMS Version 1.0.0
                     </div>
                 </div>
             </aside>
@@ -250,11 +249,9 @@
                     <!-- Main Content Page Footer -->
                     <footer class="pt-6 border-t border-slate-200 dark:border-slate-800/80 text-[11px] text-slate-400 dark:text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
                         <div>
-                            &copy; {{ date('Y') }} PT Indraco - Archive & Document Management System
+                            develope by Web Dev Indraco
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="font-medium text-slate-500 dark:text-slate-400">DMS Version 1.0.0</span>
-                            <span>•</span>
                             <span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-semibold">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Sistem Aktif
                             </span>
