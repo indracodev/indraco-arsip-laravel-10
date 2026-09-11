@@ -539,14 +539,17 @@
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
 
+                    // Default login page is NOT full screen
+                    sessionStorage.setItem('app_fullscreen', 'false');
+                    this.isFullscreen = false;
+                    if (document.fullscreenElement && document.exitFullscreen) {
+                        document.exitFullscreen().catch(() => {});
+                    }
+
                     document.addEventListener('fullscreenchange', () => {
                         this.isFullscreen = !!document.fullscreenElement;
-                        if (this.isFullscreen) {
-                            sessionStorage.setItem('app_fullscreen', 'true');
-                        }
+                        sessionStorage.setItem('app_fullscreen', this.isFullscreen ? 'true' : 'false');
                     });
-
-                    this.checkFullscreenPersistence();
 
                     if (window.desktopApi) {
                         window.desktopApi.getConfig().then(cfg => {
@@ -556,26 +559,6 @@
                         });
                     } else {
                         this.connectionUrl = window.location.origin;
-                    }
-                },
-
-                checkFullscreenPersistence() {
-                    if (sessionStorage.getItem('app_fullscreen') === 'true') {
-                        const attemptFullscreen = () => {
-                            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-                                document.documentElement.requestFullscreen().then(() => {
-                                    this.isFullscreen = true;
-                                }).catch(() => {});
-                            }
-                        };
-                        attemptFullscreen();
-                        const autoRestore = () => {
-                            attemptFullscreen();
-                            document.removeEventListener('click', autoRestore);
-                            document.removeEventListener('keydown', autoRestore);
-                        };
-                        document.addEventListener('click', autoRestore);
-                        document.addEventListener('keydown', autoRestore);
                     }
                 },
 
