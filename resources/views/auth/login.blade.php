@@ -106,6 +106,21 @@
                 </template>
             </button>
 
+            <!-- Fullscreen / Maximize Toggle Button -->
+            <button 
+                @click="toggleFullscreen()" 
+                type="button" 
+                :title="isFullscreen ? 'Keluar Full Screen (Esc / F11)' : 'Layar Penuh (Full Screen / Maximize)'"
+                class="w-6 h-6 flex items-center justify-center bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded text-amber-400 font-bold transition active:scale-95 shrink-0"
+            >
+                <template x-if="isFullscreen">
+                    <span class="text-[13px] font-black leading-none select-none">❐</span>
+                </template>
+                <template x-if="!isFullscreen">
+                    <span class="text-[13px] font-black leading-none select-none">🗖</span>
+                </template>
+            </button>
+
             <!-- Sound Effects Toggle -->
             <button 
                 @click="soundEnabled = !soundEnabled" 
@@ -505,6 +520,7 @@
                 theme: localStorage.getItem('theme') || 'dark',
                 minimized: false,
                 maximized: false,
+                isFullscreen: false,
                 capsLock: false,
                 showPassword: false,
                 helpModal: false,
@@ -523,6 +539,15 @@
                     this.updateTime();
                     setInterval(() => this.updateTime(), 1000);
 
+                    document.addEventListener('fullscreenchange', () => {
+                        this.isFullscreen = !!document.fullscreenElement;
+                        if (this.isFullscreen) {
+                            sessionStorage.setItem('app_fullscreen', 'true');
+                        }
+                    });
+
+                    this.checkFullscreenPersistence();
+
                     if (window.desktopApi) {
                         window.desktopApi.getConfig().then(cfg => {
                             if (cfg && cfg.server_config && cfg.server_config.target_url) {
@@ -531,6 +556,49 @@
                         });
                     } else {
                         this.connectionUrl = window.location.origin;
+                    }
+                },
+
+                checkFullscreenPersistence() {
+                    if (sessionStorage.getItem('app_fullscreen') === 'true') {
+                        const attemptFullscreen = () => {
+                            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+                                document.documentElement.requestFullscreen().then(() => {
+                                    this.isFullscreen = true;
+                                }).catch(() => {});
+                            }
+                        };
+                        attemptFullscreen();
+                        const autoRestore = () => {
+                            attemptFullscreen();
+                            document.removeEventListener('click', autoRestore);
+                            document.removeEventListener('keydown', autoRestore);
+                        };
+                        document.addEventListener('click', autoRestore);
+                        document.addEventListener('keydown', autoRestore);
+                    }
+                },
+
+                toggleFullscreen() {
+                    this.playClickSound();
+                    if (!document.fullscreenElement) {
+                        if (document.documentElement.requestFullscreen) {
+                            document.documentElement.requestFullscreen().then(() => {
+                                this.isFullscreen = true;
+                                sessionStorage.setItem('app_fullscreen', 'true');
+                            }).catch(() => {
+                                sessionStorage.setItem('app_fullscreen', 'true');
+                            });
+                        }
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen().then(() => {
+                                this.isFullscreen = false;
+                                sessionStorage.setItem('app_fullscreen', 'false');
+                            }).catch(() => {
+                                sessionStorage.setItem('app_fullscreen', 'false');
+                            });
+                        }
                     }
                 },
 
