@@ -19,3 +19,9 @@ yarn-error.log
 database/*.sqlite
 database/database.sqlite
 
+# Electron Desktop App
+/dekstop-apps/node_modules
+/dekstop-apps/dist
+/dekstop-apps/*.log
+
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-900 text-white font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koneksi Server DMS Terputus - Desktop Client</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full flex items-center justify-center p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 select-none">
+
+    <div class="max-w-md w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 text-center backdrop-blur">
+        <!-- Brand Icon -->
+        <div class="inline-flex p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+        </div>
+
+        <div>
+            <h1 class="text-xl font-extrabold text-white tracking-tight">Koneksi Server Tidak Terjangkau</h1>
+            <p class="text-xs text-slate-400 mt-1">Aplikasi Desktop Client tidak dapat terhubung ke Server INDRACO DMS.</p>
+        </div>
+
+        <!-- Connection Details Card -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-left space-y-3">
+            <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider">URL Server Target Saat Ini:</label>
+            <input type="text" id="targetUrlInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-500 transition" placeholder="http://127.0.0.1:8000">
+        </div>
+
+        <!-- Actions -->
+        <div class="space-y-3">
+            <button onclick="retryConnection()" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Coba Hubungkan Kembali</span>
+            </button>
+
+            <button onclick="saveAndReconnect()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition border border-slate-700 flex items-center justify-center gap-2">
+                <span>Simpan URL Baru & Reconnect</span>
+            </button>
+        </div>
+
+        <div class="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-4">
+            INDRACO DMS Workstation Client v1.0.0
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.desktopApi) {
+                const config = await window.desktopApi.getConfig();
+                if (config && config.server_config && config.server_config.target_url) {
+                    document.getElementById('targetUrlInput').value = config.server_config.target_url;
+                }
+            }
+        });
+
+        async function retryConnection() {
+            if (window.desktopApi) {
+                window.desktopApi.reloadApp();
+            } else {
+                window.location.reload();
+            }
+        }
+
+        async function saveAndReconnect() {
+            const newUrl = document.getElementById('targetUrlInput').value.trim();
+            if (!newUrl) {
+                alert('URL Server tidak boleh kosong!');
+                return;
+            }
+            if (window.desktopApi) {
+                await window.desktopApi.saveConfig(newUrl);
+            } else {
+                window.location.href = newUrl;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "app_name": "INDRACO DMS Desktop Client",
+  "version": "1.0.0",
+  "is_configured": true,
+  "server_config": {
+    "target_url": "http://127.0.0.1:8000",
+    "fallback_url": "http://localhost:8000",
+    "connection_timeout_ms": 5000,
+    "auto_reconnect": true,
+    "reconnect_interval_ms": 3000
+  },
+  "window_settings": {
+    "title": "DMS PT Indraco - Desktop Edition",
+    "width": 1366,
+    "height": 768,
+    "min_width": 1024,
+    "min_height": 600,
+    "center_on_launch": true,
+    "maximized_on_start": true,
+    "frameless": false,
+    "always_on_top": false,
+    "resizable": true
+  },
+  "hardware_integration": {
+    "enable_direct_printing": true,
+    "default_label_printer": "TSC TTP-244 Pro",
+    "silent_print": false
+  }
+}
