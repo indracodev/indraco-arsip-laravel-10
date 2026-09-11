@@ -2,19 +2,29 @@
   "name": "indraco-dms-desktop",
   "version": "1.0.0",
   "description": "INDRACO DMS Workstation Desktop Client Container",
+  "homepage": "https://indraco.com",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build:win": "electron-builder --win nsis",
-    "build:portable": "electron-builder --win portable"
+    "build:win": "electron-builder --win nsis portable",
+    "build:portable": "electron-builder --win portable",
+    "build:linux": "electron-builder --linux deb dir",
+    "build:deb": "electron-builder --linux deb",
+    "build:dir": "electron-builder --linux dir",
+    "build:all": "electron-builder --win nsis portable --linux dir"
   },
   "keywords": [
     "indraco",
     "dms",
     "desktop",
-    "pwa"
+    "pwa",
+    "ubuntu",
+    "linux"
   ],
-  "author": "Web Dev Indraco",
+  "author": {
+    "name": "Web Dev Indraco",
+    "email": "webdev@indraco.com"
+  },
   "license": "ISC",
   "devDependencies": {
     "electron": "^28.2.0",
@@ -57,6 +67,42 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "INDRACO DMS Workstation"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Office",
+      "maintainer": "Web Dev Indraco <webdev@indraco.com>",
+      "synopsis": "INDRACO DMS Workstation Desktop Client Container",
+      "description": "Aplikasi Desktop Client Workstation DMS PT Indraco untuk Linux Ubuntu",
+      "desktop": {
+        "Name": "INDRACO DMS Workstation",
+        "Comment": "INDRACO DMS Desktop Workstation Client",
+        "Categories": "Office;Utility;"
+      }
+    },
+    "deb": {
+      "priority": "optional",
+      "depends": [
+        "gconf2",
+        "gconf-service",
+        "libnotify4",
+        "libappindicator1",
+        "libxtst6",
+        "libnss3"
+      ]
     }
   }
 }
