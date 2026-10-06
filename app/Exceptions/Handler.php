@@ -44,5 +44,17 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Sesi keamanan Anda telah berakhir. Silakan muat ulang halaman atau login kembali.',
+                    'redirect' => route('login'),
+                ], 419);
+            }
+
+            return redirect()->route('login')
+                ->with('warning', 'Sesi keamanan Anda telah diperbarui atau berakhir. Silakan masukkan kredensial kembali.');
+        });
     }
 }

@@ -58,7 +58,7 @@
             </span>
             <div>
                 <h1 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Master Departemen Perusahaan</h1>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengelolaan Daftar Unit Departemen PT Indraco (TDBGrid Engine)</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengelolaan Daftar Unit Departemen PT Indraco</p>
             </div>
         </div>
 
@@ -164,7 +164,7 @@
         <!-- Table Footer Count Bar -->
         <div class="bg-slate-100 dark:bg-slate-900 border-t border-slate-300 dark:border-slate-800 px-3 py-1 font-mono text-[11px] flex items-center justify-between text-slate-600 dark:text-slate-400">
             <span>Menampilkan <strong class="text-purple-600 dark:text-purple-400" x-text="filteredItems.length"></strong> dari <strong x-text="items.length"></strong> departemen</span>
-            <span>TDBGrid View Mode</span>
+            <span></span>
         </div>
     </div>
 

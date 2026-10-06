@@ -66,7 +66,7 @@
             </span>
             <div>
                 <h1 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Kelola User Pengguna & Hak Akses</h1>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengaturan Peran Super Admin, PIC Gudang Arsip, dan PIC Departemen (TDBGrid Engine)</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengaturan Peran Super Admin, PIC Gudang Arsip, dan PIC Departemen</p>
             </div>
         </div>
 
@@ -201,7 +201,7 @@
         <!-- Table Footer Count Bar -->
         <div class="bg-slate-100 dark:bg-slate-900 border-t border-slate-300 dark:border-slate-800 px-3 py-1 font-mono text-[11px] flex items-center justify-between text-slate-600 dark:text-slate-400">
             <span>Menampilkan <strong class="text-blue-600 dark:text-blue-400" x-text="filteredUsers.length"></strong> dari <strong x-text="users.length"></strong> pengguna</span>
-            <span>TDBGrid View Mode</span>
+            <span></span>
         </div>
     </div>
 

@@ -67,7 +67,7 @@
             </span>
             <div>
                 <h1 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Master Gudang & Slot Rak Storage</h1>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengelolaan Gedung Depo Gudang & Alokasi Kapasitas Slot Rak (TDBGrid Engine)</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Pengelolaan Gedung Depo Gudang & Alokasi Kapasitas Slot Rak</p>
             </div>
         </div>
 
